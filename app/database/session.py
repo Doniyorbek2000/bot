@@ -11,13 +11,22 @@ from app.utils.logger import logger
 
 
 # Create async engine
-engine = create_async_engine(
-    settings.database_url_async,
-    echo=False,
-    pool_pre_ping=True,
-    pool_size=10,
-    max_overflow=20,
-)
+if settings.DATABASE_URL.startswith("sqlite"):
+    # SQLite doesn't support pool_size and max_overflow
+    engine = create_async_engine(
+        settings.database_url_async,
+        echo=False,
+        pool_pre_ping=True,
+    )
+else:
+    # PostgreSQL with connection pooling
+    engine = create_async_engine(
+        settings.database_url_async,
+        echo=False,
+        pool_pre_ping=True,
+        pool_size=10,
+        max_overflow=20,
+    )
 
 # Session factory
 AsyncSessionLocal = async_sessionmaker(
