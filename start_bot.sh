@@ -1,17 +1,10 @@
 #!/bin/bash
-
 # Start bot script
-cd "$(dirname "$0")"
 
-# Activate virtual environment if exists
-if [ -d "venv" ]; then
-    source venv/bin/activate
-fi
+cd /home/doniyoebrk/bot
 
-# Run migrations
-echo "Running migrations..."
-alembic upgrade head
+# Load environment variables
+export $(cat .env | xargs)
 
 # Start bot
-echo "Starting bot..."
-python -m app.main
+python3 app/main.py
