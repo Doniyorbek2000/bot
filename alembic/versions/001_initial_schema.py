@@ -8,7 +8,6 @@ Create Date: 2024-01-01 00:00:00.000000
 from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
 
 revision: str = '001'
 down_revision: Union[str, None] = None
@@ -25,8 +24,8 @@ def upgrade() -> None:
         sa.Column('latitude', sa.Float(), nullable=True),
         sa.Column('longitude', sa.Float(), nullable=True),
         sa.Column('timezone', sa.String(50), nullable=False, server_default='Asia/Tashkent'),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+        sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('viloyat', 'tuman', name='uq_region_viloyat_tuman')
     )
@@ -37,10 +36,10 @@ def upgrade() -> None:
         sa.Column('telegram_id', sa.BigInteger(), nullable=False),
         sa.Column('username', sa.String(100), nullable=True),
         sa.Column('full_name', sa.String(200), nullable=True),
-        sa.Column('is_active', sa.Boolean(), nullable=False, server_default='true'),
-        sa.Column('is_blocked', sa.Boolean(), nullable=False, server_default='false'),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+        sa.Column('is_active', sa.Boolean(), nullable=False, server_default='1'),
+        sa.Column('is_blocked', sa.Boolean(), nullable=False, server_default='0'),
+        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+        sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('telegram_id')
     )
@@ -53,12 +52,12 @@ def upgrade() -> None:
         sa.Column('title', sa.String(255), nullable=False),
         sa.Column('username', sa.String(100), nullable=True),
         sa.Column('chat_type', sa.String(20), nullable=False, server_default='group'),
-        sa.Column('is_active', sa.Boolean(), nullable=False, server_default='true'),
-        sa.Column('is_blocked', sa.Boolean(), nullable=False, server_default='false'),
+        sa.Column('is_active', sa.Boolean(), nullable=False, server_default='1'),
+        sa.Column('is_blocked', sa.Boolean(), nullable=False, server_default='0'),
         sa.Column('region_id', sa.Integer(), nullable=True),
         sa.Column('added_by', sa.BigInteger(), nullable=True),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+        sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
         sa.ForeignKeyConstraint(['region_id'], ['regions.id'], ondelete='SET NULL'),
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('telegram_id')
@@ -69,20 +68,20 @@ def upgrade() -> None:
     op.create_table('group_settings',
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('group_id', sa.BigInteger(), nullable=False),
-        sa.Column('weather_enabled', sa.Boolean(), nullable=False, server_default='false'),
-        sa.Column('prayer_enabled', sa.Boolean(), nullable=False, server_default='false'),
-        sa.Column('news_enabled', sa.Boolean(), nullable=False, server_default='false'),
-        sa.Column('jobs_enabled', sa.Boolean(), nullable=False, server_default='false'),
-        sa.Column('ai_enabled', sa.Boolean(), nullable=False, server_default='false'),
-        sa.Column('subscription_enabled', sa.Boolean(), nullable=False, server_default='false'),
-        sa.Column('invite_enabled', sa.Boolean(), nullable=False, server_default='false'),
-        sa.Column('moderation_enabled', sa.Boolean(), nullable=False, server_default='false'),
-        sa.Column('news_topics', postgresql.ARRAY(sa.String()), nullable=True),
+        sa.Column('weather_enabled', sa.Boolean(), nullable=False, server_default='0'),
+        sa.Column('prayer_enabled', sa.Boolean(), nullable=False, server_default='0'),
+        sa.Column('news_enabled', sa.Boolean(), nullable=False, server_default='0'),
+        sa.Column('jobs_enabled', sa.Boolean(), nullable=False, server_default='0'),
+        sa.Column('ai_enabled', sa.Boolean(), nullable=False, server_default='0'),
+        sa.Column('subscription_enabled', sa.Boolean(), nullable=False, server_default='0'),
+        sa.Column('invite_enabled', sa.Boolean(), nullable=False, server_default='0'),
+        sa.Column('moderation_enabled', sa.Boolean(), nullable=False, server_default='0'),
+        sa.Column('news_topics', sa.Text(), nullable=True),
         sa.Column('ban_penalty', sa.String(20), nullable=False, server_default='warn'),
         sa.Column('invite_threshold', sa.Integer(), nullable=False, server_default='3'),
         sa.Column('language', sa.String(10), nullable=False, server_default='uz'),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+        sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
         sa.ForeignKeyConstraint(['group_id'], ['groups.telegram_id'], ondelete='CASCADE'),
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('group_id')
@@ -93,9 +92,9 @@ def upgrade() -> None:
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('group_id', sa.BigInteger(), nullable=False),
         sa.Column('schedule_time', sa.String(5), nullable=False),
-        sa.Column('is_active', sa.Boolean(), nullable=False, server_default='true'),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+        sa.Column('is_active', sa.Boolean(), nullable=False, server_default='1'),
+        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+        sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
         sa.ForeignKeyConstraint(['group_id'], ['groups.telegram_id'], ondelete='CASCADE'),
         sa.PrimaryKeyConstraint('id')
     )
@@ -105,9 +104,9 @@ def upgrade() -> None:
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('group_id', sa.BigInteger(), nullable=False),
         sa.Column('schedule_time', sa.String(5), nullable=False),
-        sa.Column('is_active', sa.Boolean(), nullable=False, server_default='true'),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+        sa.Column('is_active', sa.Boolean(), nullable=False, server_default='1'),
+        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+        sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
         sa.ForeignKeyConstraint(['group_id'], ['groups.telegram_id'], ondelete='CASCADE'),
         sa.PrimaryKeyConstraint('id')
     )
@@ -119,9 +118,9 @@ def upgrade() -> None:
         sa.Column('url', sa.String(500), nullable=False),
         sa.Column('source_type', sa.String(20), nullable=False, server_default='rss'),
         sa.Column('topic', sa.String(50), nullable=False, server_default='local'),
-        sa.Column('is_active', sa.Boolean(), nullable=False, server_default='true'),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+        sa.Column('is_active', sa.Boolean(), nullable=False, server_default='1'),
+        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+        sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('url')
     )
@@ -132,9 +131,9 @@ def upgrade() -> None:
         sa.Column('name', sa.String(100), nullable=False),
         sa.Column('url', sa.String(500), nullable=False),
         sa.Column('source_type', sa.String(20), nullable=False, server_default='rss'),
-        sa.Column('is_active', sa.Boolean(), nullable=False, server_default='true'),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+        sa.Column('is_active', sa.Boolean(), nullable=False, server_default='1'),
+        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+        sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('url')
     )
@@ -146,7 +145,7 @@ def upgrade() -> None:
         sa.Column('post_type', sa.String(20), nullable=False),
         sa.Column('content_hash', sa.String(64), nullable=False),
         sa.Column('source_url', sa.String(500), nullable=True),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
         sa.PrimaryKeyConstraint('id')
     )
     op.create_index('ix_sent_posts_group_hash', 'sent_posts', ['group_id', 'content_hash'])
@@ -159,10 +158,10 @@ def upgrade() -> None:
         sa.Column('channel_username', sa.String(100), nullable=True),
         sa.Column('channel_title', sa.String(255), nullable=True),
         sa.Column('invite_link', sa.String(500), nullable=True),
-        sa.Column('is_global', sa.Boolean(), nullable=False, server_default='false'),
-        sa.Column('is_active', sa.Boolean(), nullable=False, server_default='true'),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+        sa.Column('is_global', sa.Boolean(), nullable=False, server_default='0'),
+        sa.Column('is_active', sa.Boolean(), nullable=False, server_default='1'),
+        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+        sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
         sa.ForeignKeyConstraint(['group_id'], ['groups.telegram_id'], ondelete='CASCADE'),
         sa.PrimaryKeyConstraint('id')
     )
@@ -172,10 +171,10 @@ def upgrade() -> None:
         sa.Column('id', sa.BigInteger(), nullable=False),
         sa.Column('user_id', sa.BigInteger(), nullable=False),
         sa.Column('group_id', sa.BigInteger(), nullable=False),
-        sa.Column('is_subscribed', sa.Boolean(), nullable=False, server_default='false'),
-        sa.Column('checked_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+        sa.Column('is_subscribed', sa.Boolean(), nullable=False, server_default='0'),
+        sa.Column('checked_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+        sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('user_id', 'group_id', name='uq_user_group_subscription')
     )
@@ -186,8 +185,8 @@ def upgrade() -> None:
         sa.Column('inviter_id', sa.BigInteger(), nullable=False),
         sa.Column('invited_id', sa.BigInteger(), nullable=False),
         sa.Column('group_id', sa.BigInteger(), nullable=False),
-        sa.Column('is_valid', sa.Boolean(), nullable=False, server_default='true'),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+        sa.Column('is_valid', sa.Boolean(), nullable=False, server_default='1'),
+        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('inviter_id', 'invited_id', 'group_id', name='uq_invite_tracking')
     )
@@ -198,10 +197,10 @@ def upgrade() -> None:
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('group_id', sa.BigInteger(), nullable=False),
         sa.Column('word', sa.String(200), nullable=False),
-        sa.Column('is_active', sa.Boolean(), nullable=False, server_default='true'),
+        sa.Column('is_active', sa.Boolean(), nullable=False, server_default='1'),
         sa.Column('added_by', sa.BigInteger(), nullable=True),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+        sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
         sa.ForeignKeyConstraint(['group_id'], ['groups.telegram_id'], ondelete='CASCADE'),
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('group_id', 'word', name='uq_banned_word_group')
@@ -214,7 +213,7 @@ def upgrade() -> None:
         sa.Column('group_id', sa.BigInteger(), nullable=False),
         sa.Column('reason', sa.String(500), nullable=True),
         sa.Column('warned_by', sa.BigInteger(), nullable=True),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
         sa.PrimaryKeyConstraint('id')
     )
     op.create_index('ix_warnings_user_group', 'warnings', ['user_id', 'group_id'])
@@ -230,7 +229,7 @@ def upgrade() -> None:
         sa.Column('response_text', sa.Text(), nullable=True),
         sa.Column('status', sa.String(20), nullable=False, server_default='success'),
         sa.Column('error_message', sa.Text(), nullable=True),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
         sa.PrimaryKeyConstraint('id')
     )
 
@@ -242,7 +241,7 @@ def upgrade() -> None:
         sa.Column('action', sa.String(100), nullable=False),
         sa.Column('details', sa.Text(), nullable=True),
         sa.Column('level', sa.String(20), nullable=False, server_default='info'),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
         sa.PrimaryKeyConstraint('id')
     )
     op.create_index('ix_admin_logs_level', 'admin_logs', ['level'])
@@ -254,8 +253,8 @@ def upgrade() -> None:
         sa.Column('key', sa.String(100), nullable=False),
         sa.Column('value', sa.Text(), nullable=True),
         sa.Column('description', sa.String(500), nullable=True),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+        sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('key')
     )
@@ -266,12 +265,12 @@ def upgrade() -> None:
         sa.Column('group_id', sa.BigInteger(), nullable=False),
         sa.Column('content', sa.Text(), nullable=False),
         sa.Column('media_url', sa.String(500), nullable=True),
-        sa.Column('scheduled_at', sa.DateTime(timezone=True), nullable=False),
-        sa.Column('is_sent', sa.Boolean(), nullable=False, server_default='false'),
-        sa.Column('sent_at', sa.DateTime(timezone=True), nullable=True),
+        sa.Column('scheduled_at', sa.DateTime(), nullable=False),
+        sa.Column('is_sent', sa.Boolean(), nullable=False, server_default='0'),
+        sa.Column('sent_at', sa.DateTime(), nullable=True),
         sa.Column('created_by', sa.BigInteger(), nullable=True),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+        sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
         sa.ForeignKeyConstraint(['group_id'], ['groups.telegram_id'], ondelete='CASCADE'),
         sa.PrimaryKeyConstraint('id')
     )
