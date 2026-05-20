@@ -114,6 +114,50 @@ Har bir modulni sozlash uchun guruhda /settings buyrug'ini ishlating."""
     logger.info(f"✅ Sent /admin response to {message.from_user.id}")
 
 
+@dp.message(Command("settings"))
+async def cmd_settings(message: Message):
+    """Handle /settings command."""
+    logger.info(f"📨 /settings from user {message.from_user.id}")
+    
+    text = """⚙️ <b>Guruh Sozlamalari</b>
+
+<b>Modullarni yoqish/o'chirish:</b>
+
+🌤 <b>Ob-havo moduli:</b> O'chirilgan
+   • Mintaqani tanlang
+   • Vaqt jadvalini sozlang
+
+🕌 <b>Namoz vaqtlari:</b> O'chirilgan
+   • Mintaqani tanlang
+   • Vaqt jadvalini sozlang
+
+📰 <b>Yangiliklar:</b> O'chirilgan
+   • Mavzularni tanlang
+   • Vaqt jadvalini sozlang
+
+💼 <b>Ish e'lonlari:</b> O'chirilgan
+   • Mintaqani tanlang
+   • Vaqt jadvalini sozlang
+
+🤖 <b>AI Yordamchi:</b> O'chirilgan
+   • Gemini API kalitini kiriting
+
+🛡 <b>Moderatsiya:</b> O'chirilgan
+   • Taqiqlangan so'zlarni qo'shing
+   • Jazo turini tanlang
+
+📢 <b>Majburiy obuna:</b> O'chirilgan
+   • Kanallarni qo'shing
+
+👥 <b>Taklif nazorati:</b> O'chirilgan
+   • Chegarani belgilang (1-100)
+
+<i>To'liq funksional admin panel tez orada qo'shiladi!</i>"""
+    
+    await message.answer(text)
+    logger.info(f"✅ Sent /settings response to {message.from_user.id}")
+
+
 @dp.message(Command("id"))
 async def cmd_id(message: Message):
     """Handle /id command."""
@@ -131,6 +175,125 @@ async def cmd_id(message: Message):
     
     await message.answer(text)
     logger.info(f"✅ Sent /id response to {message.from_user.id}")
+
+
+@dp.message(Command("weather"))
+async def cmd_weather(message: Message):
+    """Handle /weather command."""
+    logger.info(f"📨 /weather from user {message.from_user.id}")
+    
+    text = """🌤 <b>Ob-havo Moduli</b>
+
+Ob-havo moduli hozircha sozlanmagan.
+
+<b>Sozlash uchun:</b>
+1. Guruhda /admin buyrug'ini yuboring
+2. Ob-havo modulini yoqing
+3. Mintaqangizni tanlang
+4. Vaqt jadvalini sozlang
+
+<i>Modul tez orada to'liq ishga tushadi!</i>"""
+    
+    await message.answer(text)
+    logger.info(f"✅ Sent /weather response to {message.from_user.id}")
+
+
+@dp.message(Command("prayer"))
+async def cmd_prayer(message: Message):
+    """Handle /prayer command."""
+    logger.info(f"📨 /prayer from user {message.from_user.id}")
+    
+    text = """🕌 <b>Namoz Vaqtlari Moduli</b>
+
+Namoz vaqtlari moduli hozircha sozlanmagan.
+
+<b>Sozlash uchun:</b>
+1. Guruhda /admin buyrug'ini yuboring
+2. Namoz vaqtlari modulini yoqing
+3. Mintaqangizni tanlang
+4. Vaqt jadvalini sozlang
+
+<i>Modul tez orada to'liq ishga tushadi!</i>"""
+    
+    await message.answer(text)
+    logger.info(f"✅ Sent /prayer response to {message.from_user.id}")
+
+
+@dp.message(Command("news"))
+async def cmd_news(message: Message):
+    """Handle /news command."""
+    logger.info(f"📨 /news from user {message.from_user.id}")
+    
+    text = """📰 <b>Yangiliklar Moduli</b>
+
+Yangiliklar moduli hozircha sozlanmagan.
+
+<b>Sozlash uchun:</b>
+1. Guruhda /admin buyrug'ini yuboring
+2. Yangiliklar modulini yoqing
+3. Mavzularni tanlang
+4. Vaqt jadvalini sozlang
+
+<i>Modul tez orada to'liq ishga tushadi!</i>"""
+    
+    await message.answer(text)
+    logger.info(f"✅ Sent /news response to {message.from_user.id}")
+
+
+@dp.message(Command("jobs"))
+async def cmd_jobs(message: Message):
+    """Handle /jobs command."""
+    logger.info(f"📨 /jobs from user {message.from_user.id}")
+    
+    text = """💼 <b>Ish E'lonlari Moduli</b>
+
+Ish e'lonlari moduli hozircha sozlanmagan.
+
+<b>Sozlash uchun:</b>
+1. Guruhda /admin buyrug'ini yuboring
+2. Ish e'lonlari modulini yoqing
+3. Mintaqangizni tanlang
+4. Vaqt jadvalini sozlang
+
+<i>Modul tez orada to'liq ishga tushadi!</i>"""
+    
+    await message.answer(text)
+    logger.info(f"✅ Sent /jobs response to {message.from_user.id}")
+
+
+@dp.message(Command("ai"))
+async def cmd_ai(message: Message):
+    """Handle /ai command."""
+    logger.info(f"📨 /ai from user {message.from_user.id}")
+    
+    # Get question text after /ai command
+    question = message.text.replace("/ai", "").strip()
+    
+    if not question:
+        text = """🤖 <b>AI Yordamchi</b>
+
+Menga savol bering!
+
+<b>Foydalanish:</b>
+<code>/ai sizning savolingiz</code>
+
+<b>Misol:</b>
+<code>/ai Python dasturlash tili haqida ma'lumot ber</code>
+
+<i>AI modul tez orada to'liq ishga tushadi!</i>"""
+    else:
+        text = f"""🤖 <b>AI Yordamchi</b>
+
+<b>Sizning savolingiz:</b>
+{question}
+
+<b>Javob:</b>
+AI modul hozircha sozlanmagan. Gemini API kalitini qo'shganingizdan so'ng, men barcha savollaringizga javob bera olaman!
+
+<i>Modul tez orada to'liq ishga tushadi!</i>"""
+    
+    await message.answer(text)
+    logger.info(f"✅ Sent /ai response to {message.from_user.id}")
 
 
 @dp.message(F.text)

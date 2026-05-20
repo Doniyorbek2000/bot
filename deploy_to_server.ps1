@@ -1,46 +1,46 @@
 # AlwaysData server deployment script (PowerShell)
 # This script deploys the bot to AlwaysData server
+# Uses working_bot.py for reliable operation
 
 Write-Host "🚀 Starting deployment to AlwaysData server..." -ForegroundColor Green
+Write-Host ""
 
 # Server details
 $SERVER = "doniyoebrk@ssh-doniyoebrk.alwaysdata.net"
-$PASSWORD = "fs4-gMJ-XBu-ZJA"
 
-# Step 1: Pull latest code from GitHub
-Write-Host "📥 Pulling latest code from GitHub..." -ForegroundColor Yellow
-$pullCmd = @"
-cd bot && git pull origin main && echo 'Code pulled successfully'
+Write-Host "⚠️  IMPORTANT: For 24/7 operation, configure bot as AlwaysData Service" -ForegroundColor Yellow
+Write-Host "   See ALWAYSDATA_SERVICE_SETUP.md for instructions" -ForegroundColor Yellow
+Write-Host ""
+
+# Step 1: Push to GitHub
+Write-Host "� Pushing code to GitHub..." -ForegroundColor Cyan
+git add .
+git commit -m "Update bot configuration"
+git push origin main
+Write-Host "✅ Code pushed to GitHub" -ForegroundColor Green
+Write-Host ""
+
+# Step 2: Connect to server and run deployment script
+Write-Host "� Connecting to AlwaysData server..." -ForegroundColor Cyan
+Write-Host "   Server: $SERVER" -ForegroundColor Gray
+Write-Host ""
+
+$deployCmd = @"
+cd ~/bot && \
+git pull origin main && \
+chmod +x quick_restart.sh && \
+chmod +x alwaysdata_service.sh && \
+./quick_restart.sh
 "@
-echo $PASSWORD | ssh -o StrictHostKeyChecking=no $SERVER $pullCmd
 
-# Step 2: Run database migrations
-Write-Host "🗄️  Running database migrations..." -ForegroundColor Yellow
-$migrateCmd = @"
-cd bot && python3 -m alembic upgrade head && echo 'Migrations completed'
-"@
-echo $PASSWORD | ssh -o StrictHostKeyChecking=no $SERVER $migrateCmd
+Write-Host "� Executing deployment on server..." -ForegroundColor Cyan
+ssh -o StrictHostKeyChecking=no $SERVER $deployCmd
 
-# Step 3: Stop existing bot process
-Write-Host "🛑 Stopping existing bot process..." -ForegroundColor Yellow
-$stopCmd = @"
-pkill -f 'python3 app/main.py' || echo 'No existing bot process found'
-"@
-echo $PASSWORD | ssh -o StrictHostKeyChecking=no $SERVER $stopCmd
-
-# Step 4: Start the bot
-Write-Host "▶️  Starting bot..." -ForegroundColor Yellow
-$startCmd = @"
-cd bot && nohup python3 app/main.py > bot.log 2>&1 & echo 'Bot started'
-"@
-echo $PASSWORD | ssh -o StrictHostKeyChecking=no $SERVER $startCmd
-
-# Step 5: Check bot status
-Write-Host "📊 Checking bot status..." -ForegroundColor Yellow
-Start-Sleep -Seconds 3
-$statusCmd = @"
-cd bot && if pgrep -f 'python3 app/main.py' > /dev/null; then echo 'Bot is running!'; tail -n 10 bot.log; else echo 'Bot not running. Logs:'; tail -n 20 bot.log; fi
-"@
-echo $PASSWORD | ssh -o StrictHostKeyChecking=no $SERVER $statusCmd
-
+Write-Host ""
 Write-Host "🎉 Deployment completed!" -ForegroundColor Green
+Write-Host ""
+Write-Host "📋 Next Steps:" -ForegroundColor Yellow
+Write-Host "   1. Test bot: Send /start to @GuruhAgent_bot" -ForegroundColor White
+Write-Host "   2. For 24/7 operation: Configure as Service (see ALWAYSDATA_SERVICE_SETUP.md)" -ForegroundColor White
+Write-Host "   3. View logs: ssh $SERVER 'screen -r hudud_bot'" -ForegroundColor White
+Write-Host ""
