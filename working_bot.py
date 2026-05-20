@@ -21,7 +21,9 @@ BOT_TOKEN = "8525111021:AAFUmLHZ3LZcHgw8pbbzIw6xRbYG35x2y1Q"
 SUPER_ADMIN_ID = 8674220680
 
 # Initialize bot and dispatcher
-bot = Bot(token=BOT_TOKEN, parse_mode=ParseMode.HTML)
+from aiogram.client.default import DefaultBotProperties
+
+bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
 
 
