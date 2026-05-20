@@ -105,7 +105,11 @@ async def main():
 
 
 if __name__ == "__main__":
+    print("=" * 50)
+    print("🚀 Starting Hudud Agent Bot...")
+    print("=" * 50)
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
+        print("\n⛔ Bot stopped by user")
         logger.info("Bot stopped by user")
