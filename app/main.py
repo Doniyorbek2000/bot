@@ -18,6 +18,8 @@ from app.bot.middlewares.redis_middleware import RedisMiddleware
 async def on_startup(bot: Bot):
     """Actions on bot startup."""
     logger.info("Bot starting up...")
+    logger.info(f"Bot token: {settings.BOT_TOKEN[:20]}...")
+    logger.info(f"Super admin IDs: {settings.SUPER_ADMIN_IDS}")
     
     # Check database connection
     try:
@@ -79,10 +81,15 @@ async def main():
     dp["redis"] = redis_client
     
     # Register handlers
+    logger.info("Registering handlers...")
     dp.include_router(common.router)
+    logger.info("Common router registered")
     dp.include_router(admin.router)
+    logger.info("Admin router registered")
     dp.include_router(user_commands.router)
+    logger.info("User commands router registered")
     dp.include_router(group_events.router)
+    logger.info("Group events router registered")
     
     # Startup/shutdown
     dp.startup.register(on_startup)

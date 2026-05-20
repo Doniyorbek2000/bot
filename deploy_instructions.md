@@ -1,112 +1,119 @@
-# AlwaysData'ga Deploy qilish yo'riqnomasi
+# 🚀 AlwaysData Serverga Bot Deploy Qilish
 
-## 1. SSH orqali serverga ulanish
-
+## SSH orqali ulanish:
 ```bash
 ssh doniyoebrk@ssh-doniyoebrk.alwaysdata.net
+# Parol: fs4-gMJ-XBu-ZJA
 ```
-Parol: `fs4-gMJ-XBu-ZJA`
 
-## 2. GitHub'dan loyihani clone qilish
-
+## 1. Bot papkasiga o'tish:
 ```bash
-cd ~
-git clone https://github.com/Doniyorbek2000/bot.git telegram-bot
-cd telegram-bot
+cd bot
 ```
 
-## 3. Virtual environment yaratish
-
+## 2. Eng yangi kodni tortish:
 ```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-## 4. .env faylini yaratish
-
-```bash
-nano .env
-```
-
-Quyidagi ma'lumotlarni kiriting:
-
-```env
-BOT_TOKEN=8203936087:AAGYbGA2GKmty1g87qZUxvL555h3U24hkfw
-SUPER_ADMIN_IDS=123456789
-DATABASE_URL=sqlite+aiosqlite:///./hudud_bot.db
-REDIS_URL=redis://localhost:6379/0
-GEMINI_API_KEY=AIzaSyAPBo9Mvcv45gl8as57UdsTkz8U95Wy9bs
-WEATHER_API_KEY=3bd96747cc5158a323d55f9d0d58ce90
-TIMEZONE=Asia/Tashkent
-LOG_LEVEL=INFO
-```
-
-Ctrl+X, Y, Enter bilan saqlang.
-
-## 5. Paketlarni o'rnatish
-
-```bash
-pip install -r requirements.txt
-```
-
-## 6. Database yaratish
-
-```bash
-alembic upgrade head
-```
-
-## 7. Botni ishga tushirish
-
-### A. Test rejimida (to'g'ri ishlashini tekshirish):
-```bash
-python -m app.main
-```
-
-Ctrl+C bilan to'xtatish mumkin.
-
-### B. Background'da ishga tushirish (doimiy):
-```bash
-nohup python -m app.main > bot.log 2>&1 &
-```
-
-## 8. Bot holatini tekshirish
-
-```bash
-# Loglarni ko'rish
-tail -f bot.log
-
-# Jarayonni topish
-ps aux | grep python
-
-# Botni to'xtatish (agar kerak bo'lsa)
-pkill -f "python -m app.main"
-```
-
-## 9. Yangilanishlarni olish
-
-```bash
-cd ~/telegram-bot
 git pull origin main
-pip install -r requirements.txt
-alembic upgrade head
+```
+
+## 3. Dependencies o'rnatish (agar kerak bo'lsa):
+```bash
+pip3 install --user -r requirements.txt
+```
+
+## 4. Database migratsiyasini ishga tushirish:
+```bash
+python3 -m alembic upgrade head
+```
+
+## 5. Botni ishga tushirish (screen yordamida):
+```bash
+# Eski screen session'ni o'chirish
+screen -X -S hudud_bot quit 2>/dev/null
+
+# Yangi screen session yaratish va botni ishga tushirish
+screen -dmS hudud_bot bash -c 'cd /home/doniyoebrk/bot && python3 app/main.py'
+
+# Screen session'ni ko'rish
+screen -ls
+
+# Screen session'ga ulanish (loglarni ko'rish uchun)
+screen -r hudud_bot
+# (Chiqish uchun: Ctrl+A, keyin D)
+```
+
+## 6. Bot ishlayotganini tekshirish:
+```bash
+# Process'ni tekshirish
+ps aux | grep "python3 app/main.py" | grep -v grep
+
+# Yoki
+pgrep -f "python3 app/main.py"
+```
+
+## 7. Botni to'xtatish:
+```bash
+# Screen session orqali
+screen -X -S hudud_bot quit
+
+# Yoki to'g'ridan-to'g'ri process'ni o'chirish
+pkill -f "python3 app/main.py"
+```
+
+## 🔄 Tez Deploy (Barcha qadamlar):
+```bash
+cd bot && \
+git pull origin main && \
+screen -X -S hudud_bot quit 2>/dev/null && \
+screen -dmS hudud_bot bash -c 'cd /home/doniyoebrk/bot && python3 app/main.py' && \
+sleep 2 && \
+screen -ls && \
+pgrep -f "python3 app/main.py" && \
+echo "✅ Bot muvaffaqiyatli ishga tushdi!"
+```
+
+## 📱 Bot Ma'lumotlari:
+- **Bot Username:** @GuruhAgent_bot
+- **Bot Link:** https://t.me/GuruhAgent_bot
+- **Super Admin ID:** 8674220680
+
+## 🔍 Loglarni Ko'rish:
+```bash
+# Screen session'ga ulanish
+screen -r hudud_bot
+
+# Yoki agar bot log faylga yozayotgan bo'lsa
+tail -f bot.log
+```
+
+## ⚠️ Muhim Eslatmalar:
+1. AlwaysData serverda uzoq vaqt ishlaydigan process'lar avtomatik o'chirilishi mumkin
+2. 24/7 ishlash uchun **Services** bo'limidan sozlash tavsiya etiladi
+3. Screen session ishlamasa, tmux ishlatishingiz mumkin
+
+## 🛠️ Muammolarni Hal Qilish:
+
+### Bot javob bermasa:
+```bash
+# Loglarni tekshirish
+screen -r hudud_bot
+
+# Process ishlayotganini tekshirish
+ps aux | grep python3
 
 # Botni qayta ishga tushirish
-pkill -f "python -m app.main"
-nohup python -m app.main > bot.log 2>&1 &
+screen -X -S hudud_bot quit
+screen -dmS hudud_bot bash -c 'cd /home/doniyoebrk/bot && python3 app/main.py'
 ```
 
-## 10. AlwaysData Sites orqali (avtomatik restart)
+### Database xatoligi:
+```bash
+cd bot
+python3 -m alembic upgrade head
+```
 
-1. AlwaysData admin panelda **Sites** bo'limiga o'ting
-2. **Add a site** tugmasini bosing
-3. Quyidagilarni to'ldiring:
-   - **Name**: telegram-bot
-   - **Type**: Python
-   - **Python version**: 3.11 yoki yuqori
-   - **Command**: `python -m app.main`
-   - **Working directory**: `/home/doniyoebrk/telegram-bot`
-   - **Environment variables**: .env fayldagi ma'lumotlarni kiriting
-
-4. **Save** tugmasini bosing
-
-Bu yo'l bilan bot avtomatik ishga tushadi va server restart bo'lganda ham qayta ishga tushadi.
+### Dependencies xatoligi:
+```bash
+cd bot
+pip3 install --user -r requirements.txt
+```
